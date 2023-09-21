@@ -29,9 +29,14 @@ public class UserController {
         userService.addNewUser(user);
     }
 
-    @GetMapping(path = "/{username}")
+    @GetMapping(path = "/username/{username}")
     public User getUserByUsername(@PathVariable("username") String username) {
         return userService.getUserByUsername(username);
+    }
+
+    @GetMapping(path = "/rank/{rank}")
+    public List<User> getUsersByRank(@PathVariable("rank") String rank) {
+        return userService.getUsersByRank(rank);
     }
 
     @PutMapping(path = "/update")

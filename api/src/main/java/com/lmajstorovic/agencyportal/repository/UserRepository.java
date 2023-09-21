@@ -4,6 +4,7 @@ import com.lmajstorovic.agencyportal.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,7 @@ public interface UserRepository
 
     @Query("SELECT user from User user where user.username = ?1")
     Optional<User> findUserByUsername(String username);
+
+    @Query("SELECT user from User user where user.rank = ?1")
+    List<User> findUsersByRank(String rank);
 }

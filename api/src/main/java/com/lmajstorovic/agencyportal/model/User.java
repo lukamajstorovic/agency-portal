@@ -10,7 +10,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
-    private UUID id = UUID.randomUUID();
+    private final UUID id = UUID.randomUUID();
     private String username;
     private String rank;
 
@@ -24,10 +24,6 @@ public class User {
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getUsername() {

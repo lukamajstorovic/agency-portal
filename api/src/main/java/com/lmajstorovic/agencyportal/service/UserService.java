@@ -50,6 +50,15 @@ public class UserService {
         }
     }
 
+    public List<User> getUsersByRank(String rank) {
+        List<User> userCollection = userRepository.findUsersByRank(rank);
+        if (!userCollection.isEmpty()) {
+            return userCollection;
+        } else {
+            throw new IllegalStateException("Users with rank " + rank + " do not exist");
+        }
+    }
+
     @Transactional
     public void updateUser(User user) {
         String username = user.getUsername();

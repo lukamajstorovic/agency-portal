@@ -1,9 +1,14 @@
 package com.lmajstorovic.agencyportal.repository;
 
 import com.lmajstorovic.agencyportal.model.User;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -12,43 +17,80 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+    private User userModel;
+    private User userInDatabase;
 
-    @Test
-    void createUser_ValidUser_CreatesAndSavesToDatabase() {
-        // Arrange
-        User user = new User("username", "rank");
-
-        // Act
-        User createdUser = userRepository.save(user);
-
-        // Assert
-        assertThat(createdUser).isNotNull();
-        assertThat(createdUser.getId()).isEqualTo(user.getId());
-        assertThat(createdUser.getUsername()).isEqualTo(user.getUsername());
-        assertThat(createdUser.getRank()).isEqualTo(user.getRank());
-    }
-
-
-    @Test
-    void CreatesUser_And_SavesToDatabase_And_DeletesUser_FromDatabase() {
-
-    }
-
-    @Test
-    void CreatesUser_And_SavesToDatabase_And_FindsUser_ByUsername_InDatabase_And_ReturnsUser() {
-        User user = new User(
+    @BeforeEach
+    void setUp() {
+        userModel = new User(
             "username",
             "rank"
         );
-        userRepository.save(user);
+        this.userInDatabase = userRepository.save(userModel);
+    }
 
-        User userResult = userRepository
-            .findUserByUsername("username")
-            .orElse(null);
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteById(this.userInDatabase.getId());
+    }
 
-        assertThat(userResult).isNotNull();
-        assertThat(userResult.getId()).isEqualTo(user.getId());
-        assertThat(userResult.getUsername()).isEqualTo(user.getUsername());
-        assertThat(userResult.getRank()).isEqualTo(user.getRank());
+    @Test
+    void createUser_ValidUser_CreatesAndSavesToDatabase() {
+        assertThat(userInDatabase).isNotNull();
+        assertThat(userInDatabase.getId()).isEqualTo(userModel.getId());
+        assertThat(userInDatabase.getUsername()).isEqualTo(userModel.getUsername());
+        assertThat(userInDatabase.getRank()).isEqualTo(userModel.getRank());
+    }
+
+    @Test
+    void createUser_SaveToDatabase_FindById() {
+        Optional<User> userResult = userRepository.findById(userModel.getId());
+        assertThat(userResult).isNotEmpty();
+        User userResultPresent;
+        if (userResult.isPresent()) {
+            userResultPresent = userResult.get();
+            assertThat(userResultPresent.getId()).isEqualTo(userModel.getId());
+            assertThat(userResultPresent.getUsername()).isEqualTo(userModel.getUsername());
+            assertThat(userResultPresent.getRank()).isEqualTo(userModel.getRank());
+        }
+    }
+
+    @Test
+    void createUser_SaveToDatabase_FindByUsername() {
+        Optional<User> userResult = userRepository.findUserByUsername(userModel.getUsername());
+        assertThat(userResult).isNotEmpty();
+        User userResultPresent;
+        if (userResult.isPresent()) {
+            userResultPresent = userResult.get();
+            assertThat(userResultPresent.getId()).isEqualTo(userModel.getId());
+            assertThat(userResultPresent.getUsername()).isEqualTo(userModel.getUsername());
+            assertThat(userResultPresent.getRank()).isEqualTo(userModel.getRank());
+        }
+    }
+
+    @Test
+    void createUser_SaveToDatabase_FindByRank() {
+        List<User> userResultCollection = userRepository.findUsersByRank(userModel.getUsername());
+        assertThat(userResultCollection).isNotNull();
+        userResultCollection.forEach(userResult -> {
+                assertThat(userResult.getId()).isEqualTo(userModel.getId());
+                assertThat(userResult.getUsername()).isEqualTo(userModel.getUsername());
+                assertThat(userResult.getRank()).isEqualTo(userModel.getRank());
+            }
+        );
+    }
+
+    @Test
+    void createUser_SaveToDatabase_DeleteUser() {
+        User userModelDelete = new User(
+            "usernameDelete",
+            "rankDelete"
+        );
+        User userInDatabaseDelete = userRepository.save(userModelDelete);
+
+        userRepository.delete(userInDatabaseDelete);
+
+        Optional<User> deletedUserResult = userRepository.findUserByUsername(userModelDelete.getUsername());
+        assertThat(deletedUserResult).isEmpty();
     }
 }
