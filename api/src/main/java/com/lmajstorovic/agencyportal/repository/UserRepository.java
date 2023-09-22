@@ -16,4 +16,7 @@ public interface UserRepository
 
     @Query("SELECT user from User user where user.rank = ?1")
     List<User> findUsersByRank(String rank);
+
+    @Query("SELECT user.tag from User user where user.tag = ?1")
+    Optional<String> findTag(String tag);
 }

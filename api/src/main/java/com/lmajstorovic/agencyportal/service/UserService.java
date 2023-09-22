@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,24 +58,68 @@ public class UserService {
         }
     }
 
+    public Boolean tagAlreadyExists(String tag) {
+        Optional<String> tagResult = userRepository.findTag(tag);
+        return tagResult.isPresent();
+    }
+
     @Transactional
     public void updateUser(User user) {
         String username = user.getUsername();
+        String password = user.getPassword();
         String rank = user.getRank();
-        if (username != null &&
-            !username.isEmpty() &&
-            !Objects.equals(user.getUsername(), username)) {
-            user.setUsername(username);
-            Optional<User> userOptional = userRepository
-                .findUserByUsername(username);
+        String tag = user.getTag();
+        UUID idPersonalSecretary = user.getIdPersonalSecretary();
+        Boolean approved = user.getApproved();
+
+        Optional<User> existingUserOptional = userRepository.findById(user.getId());
+        if (existingUserOptional.isEmpty()) {
+            throw new IllegalStateException("User not found");
+        }
+        User existingUser = existingUserOptional.get();
+
+        if (username == null || username.isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+
+        if (!existingUser.getUsername().equals(username)) {
+            Optional<User> userOptional = userRepository.findUserByUsername(username);
             if (userOptional.isPresent()) {
-                throw new IllegalStateException("username taken");
+                throw new IllegalStateException("Username is already taken");
             }
         }
-        if (rank != null &&
-            !rank.isEmpty() &&
-            !Objects.equals(user.getRank(), rank)) {
-            user.setRank(rank);
+
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
+
+        if (rank == null || rank.isEmpty()) {
+            throw new IllegalArgumentException("Rank cannot be empty");
+        }
+
+        if (tag == null) {
+            throw new IllegalArgumentException("Tag can not be empty");
+        } else if (tag.contains("[]")) {
+            tag = tag
+                .replace("[", "")
+                .replace("]", "");
+        } else if (tag.length() < 2 || tag.length() > 4) {
+            throw new IllegalArgumentException("Tag must be between 2 and 4 characters long");
+        } else if (tagAlreadyExists(tag)) {
+            throw new IllegalStateException("Tag is already taken");
+        }
+
+        if (approved == null) {
+            throw new IllegalArgumentException("Approved can not be null");
+        }
+
+        existingUser.setUsername(username);
+        existingUser.setPassword(password);
+        existingUser.setRank(rank);
+        existingUser.setTag(tag);
+        existingUser.setIdPersonalSecretary(idPersonalSecretary);
+        existingUser.setApproved(approved);
+
+        userRepository.save(existingUser);
     }
 }
