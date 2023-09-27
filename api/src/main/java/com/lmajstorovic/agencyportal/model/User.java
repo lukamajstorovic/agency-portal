@@ -5,64 +5,83 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
+@Data
+@Builder
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
+    @Getter
     @Id
     private UUID id = UUID.randomUUID();
+    @Getter
     private String username;
+    @Getter
     private String password;
-    private String rank;
+    @Getter
+    private String rank = "Agent I";
     @Nullable
     private String tag;
     @Nullable
     @Column(name = "id_personal_secretary")
     private UUID idPersonalSecretary;
-    private Boolean approved;
+    @Getter
+    private Boolean approved = false;
+    @Getter
     @Column(name = "created_at")
     private Timestamp createdAt = Timestamp.from(Instant.now());
 
-    public User(String username, String password, String rank, Boolean approved) {
+    public User(String username, String password, String rank) {
         this.username = username;
         this.password = password;
         this.rank = rank;
-        this.approved = approved;
-    }
-
-    public User() {
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRank() {
-        return rank;
     }
 
     public void setRank(String rank) {
@@ -87,16 +106,8 @@ public class User {
         this.idPersonalSecretary = idPersonalSecretary;
     }
 
-    public Boolean getApproved() {
-        return approved;
-    }
-
     public void setApproved(Boolean approved) {
         this.approved = approved;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {

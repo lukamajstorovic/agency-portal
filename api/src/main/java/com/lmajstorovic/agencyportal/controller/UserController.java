@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/user")
+@RequestMapping(path = "api/auth/user")
 public class UserController {
 
     private final UserService userService;
@@ -24,10 +24,10 @@ public class UserController {
         return userService.getUsers();
     }
 
-    @PostMapping(path = "/register")
+/*    @PostMapping(path = "/register")
     public void registerUser(@RequestBody User user) {
         userService.addNewUser(user);
-    }
+    }*/
 
     @GetMapping(path = "/username/{username}")
     public User getUserByUsername(@PathVariable("username") String username) {
@@ -39,7 +39,7 @@ public class UserController {
         return userService.getUsersByRank(rank);
     }
 
-    @PutMapping(path = "/update")
+    @PatchMapping(path = "/update")
     public void updateUser(@RequestBody User user) {
         userService.updateUser(user);
     }

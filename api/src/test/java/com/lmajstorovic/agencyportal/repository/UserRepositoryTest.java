@@ -37,8 +37,7 @@ class UserRepositoryTest {
         userModel = new User(
             "username",
             "password",
-            "rank",
-            true
+            "rank"
         );
         this.userInDatabase = userRepository.save(userModel);
     }
@@ -84,8 +83,7 @@ class UserRepositoryTest {
         User userModelDelete = new User(
             "usernameDelete",
             "passwordDelete",
-            "rankDelete",
-            true
+            "rankDelete"
         );
         User userInDatabaseDelete = userRepository.save(userModelDelete);
 

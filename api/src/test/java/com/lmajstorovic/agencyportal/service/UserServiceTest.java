@@ -43,8 +43,7 @@ class UserServiceTest {
         userModel = new User(
             "username",
             "password",
-            "rank",
-            true
+            "rank"
         );
         this.userInDatabase = userRepository.save(userModel);
     }
@@ -66,8 +65,7 @@ class UserServiceTest {
         User newUser = new User(
             "new_user",
             "new_password",
-            "new_rank",
-            true
+            "new_rank"
         );
 
         userService.addNewUser(newUser);
@@ -135,8 +133,7 @@ class UserServiceTest {
         User existingUser = new User(
             "existing_username",
             "password",
-            "rank",
-            true
+            "rank"
         );
 
         User updatedUser = new User();
@@ -209,8 +206,7 @@ class UserServiceTest {
         User existingUser = new User(
             "existing_user",
             "password",
-            "rank",
-            true
+            "rank"
         );
         existingUser.setTag("here");
 

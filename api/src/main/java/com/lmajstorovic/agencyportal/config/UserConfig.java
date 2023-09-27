@@ -17,14 +17,12 @@ public class UserConfig {
             User user1 = new User(
                 "username1",
                 "password1",
-                "rank1",
-                true
+                "rank1"
             );
             User user2 = new User(
                 "username2",
                 "password2",
-                "rank2",
-                true
+                "rank2"
             );
             repository.saveAll(
                 List.of(user1, user2)
