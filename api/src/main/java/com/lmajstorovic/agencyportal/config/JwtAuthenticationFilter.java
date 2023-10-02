@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -39,8 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         username = jwtService.extractUsername(jwt);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = userService.getUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, user)) {
+            Optional<User> user = userService.getUserByUsername(username);
+            User existingUser;
+            if (user.isPresent()) {
+                existingUser = user.get();
+            } else {
+                throw new IllegalStateException("User with username " + username + " does not exist");
+            }
+            if (jwtService.isTokenValid(jwt, existingUser)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     user,
                     null,

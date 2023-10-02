@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,13 +44,17 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(userId);
     }
 
-    public User getUserByUsername(String username) {
-        Optional<User> user = userRepository.findUserByUsername(username);
+    public User getUserById(UUID id) {
+        Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
         } else {
-            throw new IllegalStateException("User with username " + username + " does not exist");
+            throw new IllegalStateException("User with id " + id + " does not exist");
         }
+    }
+
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
     }
 
     public List<User> getUsersByRank(String rank) {
@@ -61,9 +66,102 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Boolean tagAlreadyExists(String tag) {
+    private Boolean usernameAlreadyExists(String username) {
+        Optional<User> userResult = userRepository.findUserByUsername(username);
+        return userResult.isPresent();
+    }
+
+    private Boolean tagAlreadyExists(String tag) {
         Optional<String> tagResult = userRepository.findTag(tag);
         return tagResult.isPresent();
+    }
+
+    @Transactional
+    public void updateUsername(UUID userId, String username) {
+        Optional<User> user = userRepository.findById(userId);
+        User existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            if (username.isBlank()) {
+                throw new IllegalArgumentException("Username can not be empty");
+            } else if (Objects.equals(existingUser.getUsername(), username)) {
+                throw new IllegalStateException("New username can not be the same as the old username");
+            } else if (usernameAlreadyExists(username)) {
+                throw new IllegalStateException("Username is already taken");
+            } else {
+                existingUser.setUsername(username);
+                userRepository.save(existingUser);
+            }
+        } else {
+            throw new IllegalStateException("User with id " + userId + " not found");
+        }
+    }
+
+    @Transactional
+    public void updateTag(UUID userId, String tag) {
+        Optional<User> user = userRepository.findById(userId);
+        User existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            if (tag.contains("[]")) {
+                tag = tag
+                    .replace("[", "")
+                    .replace("]", "");
+            } else if (tag.length() < 2 || tag.length() > 4 || tag.isBlank()) {
+                throw new IllegalArgumentException("Tag must be between 2 and 4 characters long");
+            } else if (Objects.equals(existingUser.getTag(), tag)) {
+                throw new IllegalStateException("New tag can not be the same as the old tag");
+            } else if (tagAlreadyExists(tag)) {
+                throw new IllegalStateException("Tag is already taken");
+            } else {
+                existingUser.setTag(tag);
+                userRepository.save(existingUser);
+            }
+        } else {
+            throw new IllegalStateException("User with id " + userId + " not found");
+        }
+    }
+
+    @Transactional
+    public void updateRank(String username, String rank) {
+        Optional<User> user = userRepository.findUserByUsername(username);
+        User existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            if (rank.isEmpty()) {
+                throw new IllegalArgumentException("Rank cannot be empty");
+            } else {
+                existingUser.setRank(rank);
+                userRepository.save(existingUser);
+                //TODO: CREATE A PROMOTION LOG
+            }
+        } else {
+            //TODO: CREATE A PROMOTION LOG
+        }
+    }
+
+    @Transactional
+    public void updateApprovedStatus(UUID userId, Boolean approved) {
+        Optional<User> user = userRepository.findById(userId);
+        User existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            if (approved == null) {
+                throw new IllegalArgumentException("Approved can not be null");
+            } else if (existingUser.getApproved() == approved && approved) {
+                if (approved) {
+                    throw new IllegalStateException("User is already approved");
+                } else {
+                    throw new IllegalStateException("User is already not approved");
+                }
+            } else {
+                existingUser.setApproved(approved);
+                userRepository.save(existingUser);
+                //TODO: CREATE A PROMOTION LOG
+            }
+        } else {
+            throw new IllegalStateException("User with id " + userId + " not found");
+        }
     }
 
     @Transactional
@@ -71,7 +169,6 @@ public class UserService implements UserDetailsService {
         String username = user.getUsername();
         String password = user.getPassword();
         String rank = user.getRank();
-        String tag = user.getTag();
         UUID idPersonalSecretary = user.getIdPersonalSecretary();
         Boolean approved = user.getApproved();
 
@@ -92,26 +189,6 @@ public class UserService implements UserDetailsService {
             }
         }
 
-        if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters long");
-        }
-
-        if (rank == null || rank.isEmpty()) {
-            throw new IllegalArgumentException("Rank cannot be empty");
-        }
-
-        if (tag == null) {
-            throw new IllegalArgumentException("Tag can not be empty");
-        } else if (tag.contains("[]")) {
-            tag = tag
-                .replace("[", "")
-                .replace("]", "");
-        } else if (tag.length() < 2 || tag.length() > 4) {
-            throw new IllegalArgumentException("Tag must be between 2 and 4 characters long");
-        } else if (tagAlreadyExists(tag)) {
-            throw new IllegalStateException("Tag is already taken");
-        }
-
         if (approved == null) {
             throw new IllegalArgumentException("Approved can not be null");
         }
@@ -119,7 +196,6 @@ public class UserService implements UserDetailsService {
         existingUser.setUsername(username);
         existingUser.setPassword(password);
         existingUser.setRank(rank);
-        existingUser.setTag(tag);
         existingUser.setIdPersonalSecretary(idPersonalSecretary);
         existingUser.setApproved(approved);
 
@@ -128,10 +204,13 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDetails user = this.getUserByUsername(username);
-        if (user == null) {
+        Optional<User> user = this.getUserByUsername(username);
+        UserDetails existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+        } else {
             throw new UsernameNotFoundException("User not found");
         }
-        return user;
+        return existingUser;
     }
 }

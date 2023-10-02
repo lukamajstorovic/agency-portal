@@ -91,10 +91,11 @@ class UserServiceTest {
     void getUserByUsername() {
         String usernameToRetrieve = userInDatabase.getUsername();
 
-        User retrievedUser = userService.getUserByUsername(usernameToRetrieve);
+        Optional<User> retrievedUser = userService.getUserByUsername(usernameToRetrieve);
+        User existingRetrievedUser = retrievedUser.get();
 
-        assertThat(retrievedUser).isNotNull();
-        assertThat(retrievedUser.getUsername()).isEqualTo(usernameToRetrieve);
+        assertThat(existingRetrievedUser).isNotNull();
+        assertThat(existingRetrievedUser.getUsername()).isEqualTo(usernameToRetrieve);
     }
 
     @Test
@@ -218,5 +219,23 @@ class UserServiceTest {
             .hasMessage("Tag is already taken");
 
         userRepository.deleteById(existingUser.getId());
+    }
+
+    @Test
+    public void updateUserRankWithValidData() {
+        String username = userModel.getUsername();
+        String rank = "new_rank";
+        Optional<User> user = userService.getUserByUsername(username);
+        User existingUser = null;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            existingUser.setRank(rank);
+            userService.updateUser(existingUser);
+        }
+        User updatedUser = userService.getUserById(userModel.getId());
+
+        assertThat(updatedUser).isNotNull();
+        assertThat(existingUser).isNotNull();
+        assertUsersEqual(existingUser, updatedUser);
     }
 }

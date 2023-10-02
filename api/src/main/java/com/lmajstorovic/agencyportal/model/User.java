@@ -47,6 +47,16 @@ public class User implements UserDetails {
         this.rank = rank;
     }
 
+    public User(UUID id, String username, String password, String rank, @Nullable String tag, @Nullable UUID idPersonalSecretary, Boolean approved) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.rank = rank;
+        this.tag = tag;
+        this.idPersonalSecretary = idPersonalSecretary;
+        this.approved = approved;
+    }
+
     public void setId(UUID id) {
         this.id = id;
     }
