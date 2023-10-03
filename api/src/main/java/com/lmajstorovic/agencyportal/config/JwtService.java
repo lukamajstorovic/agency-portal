@@ -19,7 +19,7 @@ public class JwtService {
 
     private static final String SECRET_KEY = "e085512dffe2d389cad87fcfed61b96df92f33cd78a72bebce2c5354a09956fb";
 
-    public String extractUsername(String jwt) {
+    public String extractUserId(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
     }
 
@@ -39,7 +39,7 @@ public class JwtService {
         return Jwts
             .builder()
             .setClaims(extraClaims)
-            .setSubject(user.getUsername())
+            .setSubject(user.getId().toString())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
             .signWith(getSigninKey(), SignatureAlgorithm.HS256)
@@ -47,8 +47,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String jwt, User user) {
-        final String username = extractUsername(jwt);
-        return (username.equals(user.getUsername()) && !isTokenExpired(jwt));
+        final String userId = extractUserId(jwt);
+        return (userId.equals(user.getId().toString()) && !isTokenExpired(jwt));
     }
 
     private boolean isTokenExpired(String jwt) {

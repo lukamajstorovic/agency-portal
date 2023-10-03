@@ -23,18 +23,11 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public void register(RegisterRequest request) {
         var user = new User();
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode((request.getPassword())));
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
-        var token = AuthenticationResponse.builder()
-            .token(jwtToken)
-            .build();
-        System.out.println("JWT: \n" + jwtToken);
-        System.out.println("TOKEN: \n" + token);
-        return token;
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

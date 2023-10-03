@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -32,22 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String username;
+        final String userId;
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
         jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<User> user = userService.getUserByUsername(username);
-            User existingUser;
-            if (user.isPresent()) {
-                existingUser = user.get();
-            } else {
-                throw new IllegalStateException("User with username " + username + " does not exist");
-            }
-            if (jwtService.isTokenValid(jwt, existingUser)) {
+        userId = jwtService.extractUserId(jwt);
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            User user = userService.getUserById(UUID.fromString(userId));
+            if (jwtService.isTokenValid(jwt, user)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     user,
                     null,

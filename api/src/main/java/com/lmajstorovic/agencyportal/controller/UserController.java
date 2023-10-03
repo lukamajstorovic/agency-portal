@@ -1,10 +1,8 @@
 package com.lmajstorovic.agencyportal.controller;
 
+import com.lmajstorovic.agencyportal.auth.AuthenticationService;
 import com.lmajstorovic.agencyportal.model.User;
-import com.lmajstorovic.agencyportal.pojo.UpdateApprovedStatusRequest;
-import com.lmajstorovic.agencyportal.pojo.UpdateRankRequest;
-import com.lmajstorovic.agencyportal.pojo.UpdateTagRequest;
-import com.lmajstorovic.agencyportal.pojo.UpdateUsernameRequest;
+import com.lmajstorovic.agencyportal.pojo.*;
 import com.lmajstorovic.agencyportal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,21 +16,21 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(
+        UserService userService,
+        AuthenticationService authenticationService
+    ) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping(path = "/all")
     public List<User> getUsers() {
         return userService.getUsers();
     }
-
-/*    @PostMapping(path = "/register")
-    public void registerUser(@RequestBody User user) {
-        userService.addNewUser(user);
-    }*/
 
     @GetMapping(path = "id/{id}")
     public User getUserById(@PathVariable("id") UUID id) {
@@ -84,7 +82,17 @@ public class UserController {
         );
     }
 
-    @PatchMapping(path = "/update/rank")
+    @PatchMapping(path = "/update/secretary")
+    public void updatePersonalSecretary(@RequestBody UpdatePersonalSecretaryRequest updatePersonalSecretaryRequest) {
+        UUID userId = updatePersonalSecretaryRequest.getUserId();
+        String secretaryUsername = updatePersonalSecretaryRequest.getSecretaryUsername();
+        userService.updatePersonalSecretary(
+            userId,
+            secretaryUsername
+        );
+    }
+
+    @PatchMapping(path = "/update/approved")
     public void updateApprovedStatus(@RequestBody UpdateApprovedStatusRequest updateApprovedStatusRequest) {
         UUID userId = updateApprovedStatusRequest.getUserId();
         Boolean approved = updateApprovedStatusRequest.getApproved();
@@ -93,7 +101,6 @@ public class UserController {
             approved
         );
     }
-
 
     @DeleteMapping(path = "/delete/{userId}")
     public void deleteUser(@PathVariable("userId") UUID userId) {

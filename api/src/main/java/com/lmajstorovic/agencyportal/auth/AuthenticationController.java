@@ -15,10 +15,12 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<MessageResponse> register(
         @RequestBody RegisterRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.register(request));
+        authenticationService.register(request);
+        MessageResponse messageResponse = new MessageResponse("Registration successful");
+        return ResponseEntity.ok(messageResponse);
     }
 
     @PatchMapping("/update/password")
@@ -31,11 +33,13 @@ public class AuthenticationController {
         );
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> register(
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(
         @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(request);
+
+        return ResponseEntity.ok(authenticationResponse);
     }
 
 }

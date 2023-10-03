@@ -98,6 +98,24 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public void updateRank(String username, String rank) {
+        Optional<User> user = userRepository.findUserByUsername(username);
+        User existingUser;
+        if (user.isPresent()) {
+            existingUser = user.get();
+            if (rank.isEmpty()) {
+                throw new IllegalArgumentException("Rank cannot be empty");
+            } else {
+                existingUser.setRank(rank);
+                userRepository.save(existingUser);
+                //TODO: CREATE A PROMOTION LOG
+            }
+        } else {
+            //TODO: CREATE A PROMOTION LOG
+        }
+    }
+
+    @Transactional
     public void updateTag(UUID userId, String tag) {
         Optional<User> user = userRepository.findById(userId);
         User existingUser;
@@ -123,20 +141,28 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateRank(String username, String rank) {
-        Optional<User> user = userRepository.findUserByUsername(username);
+    public void updatePersonalSecretary(UUID userId, String secretaryUsername) {
+        Optional<User> user = userRepository.findById(userId);
+        Optional<User> secretary = userRepository.findUserByUsername(secretaryUsername);
         User existingUser;
+        User existingSecretary;
         if (user.isPresent()) {
             existingUser = user.get();
-            if (rank.isEmpty()) {
-                throw new IllegalArgumentException("Rank cannot be empty");
+            if (secretaryUsername.isBlank()) {
+                throw new IllegalArgumentException("Secretary username can not be empty");
+            } else if (secretary.isPresent()) {
+                existingSecretary = secretary.get();
+                if (existingSecretary.getId() == existingUser.getIdPersonalSecretary()) {
+                    throw new IllegalStateException("User is already marked as the personal secretary");
+                } else {
+                    existingUser.setIdPersonalSecretary(existingSecretary.getId());
+                    userRepository.save(existingUser);
+                }
             } else {
-                existingUser.setRank(rank);
-                userRepository.save(existingUser);
-                //TODO: CREATE A PROMOTION LOG
+                throw new IllegalStateException("User with username " + secretaryUsername + " not found");
             }
         } else {
-            //TODO: CREATE A PROMOTION LOG
+            throw new IllegalStateException("User with id " + userId + " not found");
         }
     }
 
