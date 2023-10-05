@@ -24,21 +24,21 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests((authorizeHttpRequests) ->
-                    authorizeHttpRequests
-                        .anyRequest()
-                        .permitAll()
-/*                    .requestMatchers("/api/auth/**")
+                authorizeHttpRequests
+                    .requestMatchers("/api/auth/**")
+                    .authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .authorizeHttpRequests(authorizeHttpRequests ->
+                authorizeHttpRequests
+                    .requestMatchers("/api/**")
                     .permitAll()
-                    .anyRequest()
-                    .authenticated()*/
             )
             .sessionManagement((sessionManagement) ->
                 sessionManagement
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+            .authenticationProvider(authenticationProvider);
         return http.build();
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/auth/user")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthenticationController {
 
@@ -23,7 +23,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(messageResponse);
     }
 
-    @PatchMapping("/update/password")
+    @PatchMapping("/auth/user/update/password")
     public void updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest) {
         UUID userId = updatePasswordRequest.getUserId();
         String password = updatePasswordRequest.getPassword();

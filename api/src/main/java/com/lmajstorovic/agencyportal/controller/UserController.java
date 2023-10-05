@@ -2,7 +2,10 @@ package com.lmajstorovic.agencyportal.controller;
 
 import com.lmajstorovic.agencyportal.auth.AuthenticationService;
 import com.lmajstorovic.agencyportal.model.User;
-import com.lmajstorovic.agencyportal.pojo.*;
+import com.lmajstorovic.agencyportal.pojo.UpdateApprovedStatusRequest;
+import com.lmajstorovic.agencyportal.pojo.UpdatePersonalSecretaryRequest;
+import com.lmajstorovic.agencyportal.pojo.UpdateRankRequest;
+import com.lmajstorovic.agencyportal.pojo.UpdateTagRequest;
 import com.lmajstorovic.agencyportal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(path = "api/auth/user")
+@RequestMapping(path = "api/user")
 public class UserController {
 
     private final UserService userService;
@@ -37,7 +40,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping(path = "/username/{username}")
+    @GetMapping(path = "/auth/username/{username}")
     public User getUserByUsername(@PathVariable("username") String username) {
         Optional<User> user = userService.getUserByUsername(username);
         if (user.isPresent()) {
@@ -52,15 +55,6 @@ public class UserController {
         return userService.getUsersByRank(rank);
     }
 
-    @PatchMapping(path = "/update/username")
-    public void updateUsername(@RequestBody UpdateUsernameRequest updateUsernameRequest) {
-        UUID userId = updateUsernameRequest.getUserId();
-        String username = updateUsernameRequest.getUsername();
-        userService.updateUsername(
-            userId,
-            username
-        );
-    }
 
     @PatchMapping(path = "/update/tag")
     public void updateTag(@RequestBody UpdateTagRequest updateTagRequest) {
