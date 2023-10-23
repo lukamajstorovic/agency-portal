@@ -1,11 +1,14 @@
 package com.lmajstorovic.agencyportal.controller;
 
 import com.lmajstorovic.agencyportal.auth.AuthenticationService;
+import com.lmajstorovic.agencyportal.model.Rank;
 import com.lmajstorovic.agencyportal.model.User;
 import com.lmajstorovic.agencyportal.pojo.UpdateApprovedStatusRequest;
 import com.lmajstorovic.agencyportal.pojo.UpdatePersonalSecretaryRequest;
 import com.lmajstorovic.agencyportal.pojo.UpdateRankRequest;
 import com.lmajstorovic.agencyportal.pojo.UpdateTagRequest;
+import com.lmajstorovic.agencyportal.service.DivisionService;
+import com.lmajstorovic.agencyportal.service.RankService;
 import com.lmajstorovic.agencyportal.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +21,20 @@ import java.util.UUID;
 @RequestMapping(path = "api/user")
 public class UserController {
 
+    private final DivisionService divisionService;
+    private final RankService rankService;
     private final UserService userService;
     private final AuthenticationService authenticationService;
 
     @Autowired
     public UserController(
+        DivisionService divisionService,
+        RankService rankService,
         UserService userService,
         AuthenticationService authenticationService
     ) {
+        this.divisionService = divisionService;
+        this.rankService = rankService;
         this.userService = userService;
         this.authenticationService = authenticationService;
     }
@@ -51,8 +60,8 @@ public class UserController {
     }
 
     @GetMapping(path = "/rank")
-    public List<User> getUsersByRank(@RequestBody String rank) {
-        return userService.getUsersByRank(rank);
+    public List<User> getUsersByRank(@RequestBody UUID idRank) {
+        return userService.getUsersByRank(idRank);
     }
 
 
@@ -69,10 +78,11 @@ public class UserController {
     @PatchMapping(path = "/update/rank")
     public void updateRank(@RequestBody UpdateRankRequest updateRankRequest) {
         String username = updateRankRequest.getUsername();
-        String rank = updateRankRequest.getRank();
+        String rankName = updateRankRequest.getRank();
+        Rank rank = rankService.getRankByName(rankName);
         userService.updateRank(
             username,
-            rank
+            rank.getId()
         );
     }
 

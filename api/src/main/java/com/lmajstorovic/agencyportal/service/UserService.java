@@ -2,7 +2,7 @@ package com.lmajstorovic.agencyportal.service;
 
 import com.lmajstorovic.agencyportal.model.User;
 import com.lmajstorovic.agencyportal.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,14 +15,15 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Autowired
+   /* @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
+    }*/
 
     public List<User> getUsers() {
         return userRepository.findAll();
@@ -57,12 +58,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserByUsername(username);
     }
 
-    public List<User> getUsersByRank(String rank) {
-        List<User> userCollection = userRepository.findUsersByRank(rank);
+    public List<User> getUsersByRank(UUID idRank) {
+        List<User> userCollection = userRepository.findUsersByRank(idRank);
         if (!userCollection.isEmpty()) {
             return userCollection;
         } else {
-            throw new IllegalStateException("Users with rank " + rank + " do not exist");
+            throw new IllegalStateException("Users with rank " + idRank + " do not exist");
         }
     }
 
@@ -98,15 +99,15 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void updateRank(String username, String rank) {
+    public void updateRank(String username, UUID rank) {
         Optional<User> user = userRepository.findUserByUsername(username);
         User existingUser;
         if (user.isPresent()) {
             existingUser = user.get();
-            if (rank.isEmpty()) {
+            if (rank.toString().isEmpty()) {
                 throw new IllegalArgumentException("Rank cannot be empty");
             } else {
-                existingUser.setRank(rank);
+                existingUser.setIdRank(rank);
                 userRepository.save(existingUser);
                 //TODO: CREATE A PROMOTION LOG
             }
@@ -194,7 +195,7 @@ public class UserService implements UserDetailsService {
     public void updateUser(User user) {
         String username = user.getUsername();
         String password = user.getPassword();
-        String rank = user.getRank();
+        UUID rank = user.getIdRank();
         UUID idPersonalSecretary = user.getIdPersonalSecretary();
         Boolean approved = user.getApproved();
 
@@ -221,7 +222,7 @@ public class UserService implements UserDetailsService {
 
         existingUser.setUsername(username);
         existingUser.setPassword(password);
-        existingUser.setRank(rank);
+        existingUser.setIdRank(rank);
         existingUser.setIdPersonalSecretary(idPersonalSecretary);
         existingUser.setApproved(approved);
 

@@ -14,51 +14,45 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
 
+
 @Data
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Table(name = "users")
 public class User implements UserDetails {
-    @Getter
+
     @Id
     private UUID id = UUID.randomUUID();
-    @Getter
     private String username;
-    @Getter
     private String password;
-    @Getter
-    private String rank = "Agent I";
+    private UUID idRank;
     @Nullable
     private String tag;
     @Nullable
     @Column(name = "id_personal_secretary")
     private UUID idPersonalSecretary;
-    @Getter
     private Boolean approved = false;
-    @Getter
     @Column(name = "created_at")
     private Timestamp createdAt = Timestamp.from(Instant.now());
 
-    public User(String username, String password, String rank) {
+    public User(String username, String password, UUID idRank) {
         this.username = username;
         this.password = password;
-        this.rank = rank;
+        this.idRank = idRank;
     }
 
-    public User(UUID id, String username, String password, String rank, @Nullable String tag, @Nullable UUID idPersonalSecretary, Boolean approved) {
+    public User(UUID id, String username, String password, UUID idRank, @Nullable String tag, @Nullable UUID idPersonalSecretary, Boolean approved) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.rank = rank;
+        this.idRank = idRank;
         this.tag = tag;
         this.idPersonalSecretary = idPersonalSecretary;
         this.approved = approved;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     @Override
@@ -81,46 +75,8 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
-    @Nullable
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(@Nullable String tag) {
-        this.tag = tag;
-    }
-
-    @Nullable
-    public UUID getIdPersonalSecretary() {
-        return idPersonalSecretary;
-    }
-
-    public void setIdPersonalSecretary(@Nullable UUID idPersonalSecretary) {
-        this.idPersonalSecretary = idPersonalSecretary;
-    }
-
-    public void setApproved(Boolean approved) {
-        this.approved = approved;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 }
