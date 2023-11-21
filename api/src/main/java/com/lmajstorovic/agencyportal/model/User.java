@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
 
@@ -37,7 +36,7 @@ public class User implements UserDetails {
     private UUID idPersonalSecretary;
     private Boolean approved = false;
     @Column(name = "created_at")
-    private Timestamp createdAt = Timestamp.from(Instant.now());
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     public User(String username, String password, UUID idRank) {
         this.username = username;

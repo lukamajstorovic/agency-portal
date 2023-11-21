@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -26,7 +25,7 @@ public class Rank {
     private UUID idDivision;
     private Boolean deleted = false;
     @Column(name = "created_at")
-    private Timestamp createdAt = Timestamp.from(Instant.now());
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     public Rank(Integer order, String name, UUID idDivision) {
         this.position = order;

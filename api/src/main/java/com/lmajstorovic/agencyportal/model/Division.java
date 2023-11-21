@@ -7,7 +7,6 @@ import jakarta.persistence.Table;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -25,10 +24,11 @@ public class Division {
     private String name;
     private Boolean deleted = false;
     @Column(name = "created_at")
-    private Timestamp createdAt = Timestamp.from(Instant.now());
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
 
     public Division(Integer order, String name) {
         this.position = order;
         this.name = name;
     }
+
 }
