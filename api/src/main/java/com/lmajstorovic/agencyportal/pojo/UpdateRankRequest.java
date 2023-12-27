@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UpdateRankRequest {
-    private String username;
-    private String rank;
+   private String username;
+   private String rank;
 }

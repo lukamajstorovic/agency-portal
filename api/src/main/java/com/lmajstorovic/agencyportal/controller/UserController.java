@@ -20,94 +20,96 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "api/user")
 public class UserController {
-
-    private final DivisionService divisionService;
-    private final RankService rankService;
-    private final UserService userService;
-    private final AuthenticationService authenticationService;
-
-    @Autowired
-    public UserController(
-        DivisionService divisionService,
-        RankService rankService,
-        UserService userService,
-        AuthenticationService authenticationService
-    ) {
-        this.divisionService = divisionService;
-        this.rankService = rankService;
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-    }
-
-    @GetMapping(path = "/all")
-    public List<User> getUsers() {
-        return userService.getUsers();
-    }
-
-    @GetMapping(path = "id/{id}")
-    public User getUserById(@PathVariable("id") UUID id) {
-        return userService.getUserById(id);
-    }
-
-    @GetMapping(path = "/auth/username/{username}")
-    public User getUserByUsername(@PathVariable("username") String username) {
-        Optional<User> user = userService.getUserByUsername(username);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new IllegalStateException("User with username " + username + " does not exist");
-        }
-    }
-
-    @GetMapping(path = "/rank")
-    public List<User> getUsersByRank(@RequestBody UUID idRank) {
-        return userService.getUsersByRank(idRank);
-    }
-
-
-    @PatchMapping(path = "/update/tag")
-    public void updateTag(@RequestBody UpdateTagRequest updateTagRequest) {
-        UUID userId = updateTagRequest.getUserId();
-        String tag = updateTagRequest.getTag();
-        userService.updateTag(
-            userId,
-            tag
-        );
-    }
-
-    @PatchMapping(path = "/update/rank")
-    public void updateRank(@RequestBody UpdateRankRequest updateRankRequest) {
-        String username = updateRankRequest.getUsername();
-        String rankName = updateRankRequest.getRank();
-        Rank rank = rankService.getRankByName(rankName);
-        userService.updateRank(
-            username,
-            rank.getId()
-        );
-    }
-
-    @PatchMapping(path = "/update/secretary")
-    public void updatePersonalSecretary(@RequestBody UpdatePersonalSecretaryRequest updatePersonalSecretaryRequest) {
-        UUID userId = updatePersonalSecretaryRequest.getUserId();
-        String secretaryUsername = updatePersonalSecretaryRequest.getSecretaryUsername();
-        userService.updatePersonalSecretary(
-            userId,
-            secretaryUsername
-        );
-    }
-
-    @PatchMapping(path = "/update/approved")
-    public void updateApprovedStatus(@RequestBody UpdateApprovedStatusRequest updateApprovedStatusRequest) {
-        UUID userId = updateApprovedStatusRequest.getUserId();
-        Boolean approved = updateApprovedStatusRequest.getApproved();
-        userService.updateApprovedStatus(
-            userId,
-            approved
-        );
-    }
-
-    @DeleteMapping(path = "/delete/{userId}")
-    public void deleteUser(@PathVariable("userId") UUID userId) {
-        userService.deleteUser(userId);
-    }
+   
+   private final DivisionService divisionService;
+   private final RankService rankService;
+   private final UserService userService;
+   private final AuthenticationService authenticationService;
+   
+   @Autowired
+   public UserController(
+      DivisionService divisionService,
+      RankService rankService,
+      UserService userService,
+      AuthenticationService authenticationService
+   ) {
+      this.divisionService = divisionService;
+      this.rankService = rankService;
+      this.userService = userService;
+      this.authenticationService = authenticationService;
+   }
+   
+   @GetMapping(path = "/all")
+   public List<User> getUsers() {
+      return userService.getUsers();
+   }
+   
+   @GetMapping(path = "id/{id}")
+   public User getUserById(@PathVariable("id") UUID id) {
+      return userService.getUserById(id);
+   }
+   
+   @GetMapping(path = "/auth/username/{username}")
+   public User getUserByUsername(@PathVariable("username") String username) {
+      Optional<User> user = userService.getUserByUsername(username);
+      if (user.isPresent()) {
+         return user.get();
+      } else {
+         throw new IllegalStateException("User with username " + username +
+            " does not exist");
+      }
+   }
+   
+   @GetMapping(path = "/rank")
+   public List<User> getUsersByRank(@RequestBody UUID idRank) {
+      return userService.getUsersByRank(idRank);
+   }
+   
+   
+   @PatchMapping(path = "/update/tag")
+   public void updateTag(@RequestBody UpdateTagRequest updateTagRequest) {
+      UUID userId = updateTagRequest.getUserId();
+      String tag = updateTagRequest.getTag();
+      userService.updateTag(
+         userId,
+         tag
+      );
+   }
+   
+   @PatchMapping(path = "/update/rank")
+   public void updateRank(@RequestBody UpdateRankRequest updateRankRequest) {
+      String username = updateRankRequest.getUsername();
+      String rankName = updateRankRequest.getRank();
+      Rank rank = rankService.getRankByName(rankName);
+      userService.updateRank(
+         username,
+         rank.getId()
+      );
+   }
+   
+   @PatchMapping(path = "/update/secretary")
+   public void updatePersonalSecretary(@RequestBody UpdatePersonalSecretaryRequest updatePersonalSecretaryRequest) {
+      UUID userId = updatePersonalSecretaryRequest.getUserId();
+      String secretaryUsername =
+         updatePersonalSecretaryRequest.getSecretaryUsername();
+      userService.updatePersonalSecretary(
+         userId,
+         secretaryUsername
+      );
+   }
+   
+   @PatchMapping(path = "/update/approved")
+   public void updateApprovedStatus(@RequestBody UpdateApprovedStatusRequest updateApprovedStatusRequest) {
+      UUID userId = updateApprovedStatusRequest.getUserId();
+      Boolean approved = updateApprovedStatusRequest.getApproved();
+      userService.updateApprovedStatus(
+         userId,
+         approved
+      );
+   }
+   
+   @DeleteMapping(path = "/delete/{userId}")
+   public void deleteUser(@PathVariable("userId") UUID userId) {
+      userService.deleteUser(userId);
+   }
 }

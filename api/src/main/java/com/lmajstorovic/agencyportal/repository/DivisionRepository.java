@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DivisionRepository
-    extends JpaRepository<Division, UUID> {
-    @Query("SELECT division from Division division where division.name = ?1")
-    Optional<Division> findDivisionByName(String name);
+   extends JpaRepository<Division, UUID> {
+   @Query("SELECT division from Division division where division.name = ?1")
+   Optional<Division> findDivisionByName(String name);
 }

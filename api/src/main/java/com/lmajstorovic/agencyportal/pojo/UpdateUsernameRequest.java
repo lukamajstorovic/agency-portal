@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class UpdateUsernameRequest {
-    private UUID userId;
-    private String username;
+   private UUID userId;
+   private String username;
 }

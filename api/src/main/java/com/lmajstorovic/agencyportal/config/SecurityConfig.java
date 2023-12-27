@@ -15,30 +15,33 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests((authorizeHttpRequests) ->
-                authorizeHttpRequests
-                    .requestMatchers("/api/auth/**")
-                    .authenticated()
-            )
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .authorizeHttpRequests(authorizeHttpRequests ->
-                authorizeHttpRequests
-                    .requestMatchers("/api/**")
-                    .permitAll()
-            )
-            .sessionManagement((sessionManagement) ->
-                sessionManagement
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authenticationProvider(authenticationProvider);
-        return http.build();
-    }
+   
+   private final JwtAuthenticationFilter jwtAuthFilter;
+   private final AuthenticationProvider authenticationProvider;
+   
+   @Bean
+   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+      http
+         .csrf(AbstractHttpConfigurer::disable)
+         .authorizeHttpRequests((authorizeHttpRequests) ->
+            authorizeHttpRequests
+               .requestMatchers("/api/auth/**")
+               .authenticated()
+         )
+         .addFilterBefore(
+            jwtAuthFilter,
+            UsernamePasswordAuthenticationFilter.class
+         )
+         .authorizeHttpRequests(authorizeHttpRequests ->
+            authorizeHttpRequests
+               .requestMatchers("/api/**")
+               .permitAll()
+         )
+         .sessionManagement((sessionManagement) ->
+            sessionManagement
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+         )
+         .authenticationProvider(authenticationProvider);
+      return http.build();
+   }
 }

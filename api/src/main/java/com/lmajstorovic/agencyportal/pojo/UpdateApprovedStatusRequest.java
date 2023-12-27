@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class UpdateApprovedStatusRequest {
-    private UUID userId;
-    private Boolean approved;
+   private UUID userId;
+   private Boolean approved;
 }

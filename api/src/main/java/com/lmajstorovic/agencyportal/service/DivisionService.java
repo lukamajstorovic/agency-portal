@@ -10,18 +10,18 @@ import java.util.Optional;
 
 @Service
 public class DivisionService {
-    private final DivisionRepository divisionRepository;
-
-    @Autowired
-    public DivisionService(DivisionRepository divisionRepository) {
-        this.divisionRepository = divisionRepository;
-    }
-
-    public List<Division> getDivisions() {
-        return divisionRepository.findAll();
-    }
-
-    public Optional<Division> getDivisionByName(String name) {
-        return divisionRepository.findDivisionByName(name);
-    }
+   private final DivisionRepository divisionRepository;
+   
+   @Autowired
+   public DivisionService(DivisionRepository divisionRepository) {
+      this.divisionRepository = divisionRepository;
+   }
+   
+   public List<Division> getDivisions() {
+      return divisionRepository.findAll();
+   }
+   
+   public Optional<Division> getDivisionByName(String name) {
+      return divisionRepository.findDivisionByName(name);
+   }
 }

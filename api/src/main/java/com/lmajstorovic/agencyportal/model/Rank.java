@@ -18,18 +18,22 @@ import java.util.UUID;
 @Setter
 @Table(name = "ranks")
 public class Rank {
-    @Id
-    private UUID id = UUID.randomUUID();
-    private Integer position;
-    private String name;
-    private UUID idDivision;
-    private Boolean deleted = false;
-    @Column(name = "created_at")
-    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-
-    public Rank(Integer order, String name, UUID idDivision) {
-        this.position = order;
-        this.name = name;
-        this.idDivision = idDivision;
-    }
+   @Id
+   private UUID id = UUID.randomUUID();
+   private Integer position;
+   private String name;
+   private UUID idDivision;
+   private Boolean deleted = false;
+   @Column(name = "created_at")
+   private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+   
+   public Rank(
+      Integer order,
+      String name,
+      UUID idDivision
+   ) {
+      this.position = order;
+      this.name = name;
+      this.idDivision = idDivision;
+   }
 }

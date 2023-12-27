@@ -18,17 +18,20 @@ import java.util.UUID;
 @Setter
 @Table(name = "divisions")
 public class Division {
-    @Id
-    private UUID id = UUID.randomUUID();
-    private Integer position;
-    private String name;
-    private Boolean deleted = false;
-    @Column(name = "created_at")
-    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-
-    public Division(Integer order, String name) {
-        this.position = order;
-        this.name = name;
-    }
-
+   @Id
+   private UUID id = UUID.randomUUID();
+   private Integer position;
+   private String name;
+   private Boolean deleted = false;
+   @Column(name = "created_at")
+   private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+   
+   public Division(
+      Integer order,
+      String name
+   ) {
+      this.position = order;
+      this.name = name;
+   }
+   
 }

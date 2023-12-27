@@ -8,6 +8,6 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class UpdateTagRequest {
-    private UUID userId;
-    private String tag;
+   private UUID userId;
+   private String tag;
 }
