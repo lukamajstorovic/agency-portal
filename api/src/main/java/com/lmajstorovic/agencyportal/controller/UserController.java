@@ -49,7 +49,7 @@ public class UserController {
       return userService.getUserById(id);
    }
    
-   @GetMapping(path = "/auth/username/{username}")
+   @GetMapping(path = "/username/{username}")
    public User getUserByUsername(@PathVariable("username") String username) {
       Optional<User> user = userService.getUserByUsername(username);
       if (user.isPresent()) {
