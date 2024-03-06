@@ -34,7 +34,7 @@ public class User implements UserDetails {
    @Nullable
    @Column(name = "id_personal_secretary")
    private UUID idPersonalSecretary;
-   private Boolean approved = false;
+   private Boolean active = false;
    @Column(name = "created_at")
    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
    
@@ -55,7 +55,7 @@ public class User implements UserDetails {
       UUID idRank,
       @Nullable String tag,
       @Nullable UUID idPersonalSecretary,
-      Boolean approved
+      Boolean active
    ) {
       this.id = id;
       this.username = username;
@@ -63,7 +63,7 @@ public class User implements UserDetails {
       this.idRank = idRank;
       this.tag = tag;
       this.idPersonalSecretary = idPersonalSecretary;
-      this.approved = approved;
+      this.active = active;
    }
    
    @Override

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class UpdateApprovedStatusRequest {
+public class UpdateActiveStatusRequest {
    private UUID userId;
-   private Boolean approved;
+   private Boolean active;
 }

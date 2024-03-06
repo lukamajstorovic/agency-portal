@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -18,20 +19,23 @@ import java.util.UUID;
 @Setter
 @Table(name = "divisions")
 public class Division {
-   @Id
-   private UUID id = UUID.randomUUID();
-   private Integer position;
-   private String name;
-   private Boolean deleted = false;
-   @Column(name = "created_at")
-   private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
-   
-   public Division(
-      Integer order,
-      String name
-   ) {
-      this.position = order;
-      this.name = name;
-   }
-   
+    @Id
+    private UUID id = UUID.randomUUID();
+    private Integer position;
+    private String name;
+    private Time promotionWaitTime;
+    private Boolean deleted = false;
+    @Column(name = "created_at")
+    private Timestamp createdAt = new Timestamp(System.currentTimeMillis());
+
+    public Division(
+        Integer order,
+        String name,
+        Time promotionWaitTime
+    ) {
+        this.position = order;
+        this.name = name;
+        this.promotionWaitTime = promotionWaitTime;
+    }
+
 }
